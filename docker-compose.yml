@@ -1,0 +1,84 @@
+# GHC Docker setup with Postgres as backend DB.
+#
+# To run:
+# sudo docker-compose up [-d]
+#
+version: "3"
+
+services:
+  ghc_web:
+    image: geopython/geohealthcheck:latest
+
+    container_name: ghc_web
+
+    restart: unless-stopped
+
+    env_file:
+      - ghc.env
+      - ghc-postgis.env
+
+    links:
+      - postgis_ghc
+
+    depends_on:
+      - postgis_ghc
+
+    ports:
+      - 8083:80
+
+    # volumes:
+      # Optional Plugins, using Path on the host, relative to this Compose file
+      # To activate: 2 steps for runner and GHC webapp:
+      # - configure in ghc.env
+      # - mount these as docker volume on host
+      # - ./../GeoHealthCheck/plugins:/plugins:ro
+
+  ghc_runner:
+    image: geopython/geohealthcheck:latest
+
+    container_name: ghc_runner
+
+    restart: unless-stopped
+
+    env_file:
+      - ghc.env
+      - ghc-postgis.env
+
+    links:
+      - postgis_ghc
+
+    depends_on:
+      - postgis_ghc
+
+    entrypoint:
+      - /run-runner.sh
+
+    # volumes:
+      # Optional Plugins, using Path on the host, relative to this Compose file
+      # To activate 2 steps:
+      # - configure in ghc.env
+      # - mount these as docker volume on host
+      # - ./../GeoHealthCheck/plugins:/plugins:ro
+
+  postgis_ghc:
+    image: mdillon/postgis:10-alpine
+
+    container_name: postgis_ghc
+
+    restart: unless-stopped
+
+    env_file:
+      - ghc-postgis.env
+
+    volumes:
+      - ghc_pgdb:/var/lib/postgresql/data
+
+# En caso de tener que publicar la base, descomentar las siguientes 2 lineas
+#    ports:
+#      - 5432:5432
+
+    expose:
+      - 5432
+
+volumes:
+  ghc_pgdb:
