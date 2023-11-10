@@ -81,7 +81,10 @@ No se especifica directorio para logs. se pueden ver los logs ejecutando `docker
 Se utilizan el volumen `ghc_pgdb`. Que por defecto, la ubicación de este, se encuentra en `/var/lib/docker/volumes`
 
 ## Acceso
-El servicio por defecto, se levanta en el puerto 8083. en caso de cambiarlo, ver linea 27 del archivo docker-compose.yml
+El servicio por defecto, se levanta en el puerto 8083. En caso de cambiarlo, ver linea 27 del archivo `docker-compose.yml`
 
 ## Reseteo
 Para reiniciar los servicios, podemos ejecutar `docker compose restart`
+
+## Mailing
+Ver `ghc.env.example` donde se encuentran las variables de configuración para el servicio del SMTP
